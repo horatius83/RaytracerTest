@@ -48,3 +48,5 @@ Temporary Items
 *.pch
 *.log
 *.pdb
+*.pdb
+Debug/vc120.pdb

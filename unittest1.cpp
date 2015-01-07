@@ -32,9 +32,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] + b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::AreEqual(x, c.m_fX[i], L"x value was not the same.");
-					Assert::AreEqual(y, c.m_fY[i], L"y value was not the same.");
-					Assert::AreEqual(z, c.m_fZ[i], L"z value was not the same.");
+					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
+					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
+					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
 				}
 			}
 		}
@@ -57,9 +57,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] - b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::AreEqual(x, c.m_fX[i], L"x value was not the same.");
-					Assert::AreEqual(y, c.m_fY[i], L"y value was not the same.");
-					Assert::AreEqual(z, c.m_fZ[i], L"z value was not the same.");
+					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
+					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
+					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
 				}
 			}
 		}
@@ -84,9 +84,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] * scalar[i];
 
 					// Make sure they are consistent
-					Assert::AreEqual(x, c.m_fX[i], L"x value was not the same.");
-					Assert::AreEqual(y, c.m_fY[i], L"y value was not the same.");
-					Assert::AreEqual(z, c.m_fZ[i], L"z value was not the same.");
+					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
+					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
+					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
 				}
 			}
 		}
@@ -109,13 +109,39 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] * b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::AreEqual(x, c.m_fX[i], L"x value was not the same.");
-					Assert::AreEqual(y, c.m_fY[i], L"y value was not the same.");
-					Assert::AreEqual(z, c.m_fZ[i], L"z value was not the same.");
+					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
+					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
+					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
 				}
 			}
 		}
 		
+		TEST_METHOD(VectorCrossProduct) 
+		{
+			srand(8383);
+
+			for (auto i = 0; i < 1000; ++i) {
+				// Generate a bunch of numbers
+				auto a = CreateRandomPacketVector();
+				auto b = CreateRandomPacketVector();
+				auto c = a.DotProduct(b);
+
+				for (auto i = 0; i < 4; ++i) {
+					auto x0 = a.m_fX[i];
+					auto y0 = a.m_fY[i];
+					auto z0 = a.m_fZ[i];
+
+					auto x1 = b.m_fX[i];
+					auto y1 = b.m_fY[i];
+					auto z1 = b.m_fZ[i];
+
+					auto dotProduct = x0 * x1 + y0 * y1 + z0 * z1;
+
+					Assert::IsTrue(AreFloatsEqual(dotProduct, c.Get(i)), L"Dot product was not equal");
+				}
+			}
+		}
+
 		TEST_METHOD(VectorNormalize)
 		{
 			srand(68);
@@ -123,11 +149,12 @@ namespace RaytracerTests
 			for (auto i = 0; i < 1000; ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
-				auto c = PacketVector();
+				a.Normalize();
+				auto c = a;
 				c.Normalize();
 
 				for (auto i = 0; i < 4; ++i) {
-					// Subtract them
+					// Normalize them
 					auto x = a.m_fX[i];
 					auto y = a.m_fY[i];
 					auto z = a.m_fZ[i];
@@ -135,9 +162,9 @@ namespace RaytracerTests
 					auto invMagnitude = (float)(1.0 / sqrt(x*x + y*y + z*z));
 
 					// Make sure they are consistent
-					Assert::AreEqual(x * invMagnitude, c.m_fX[i], L"x value was not the same.");
-					Assert::AreEqual(y * invMagnitude, c.m_fY[i], L"y value was not the same.");
-					Assert::AreEqual(z * invMagnitude, c.m_fZ[i], L"z value was not the same.");
+					Assert::IsTrue(AreFloatsEqual(x * invMagnitude, c.m_fX[i]), L"x values were not the same.");
+					Assert::IsTrue(AreFloatsEqual(y * invMagnitude, c.m_fY[i]), L"x values were not the same.");
+					Assert::IsTrue(AreFloatsEqual(z * invMagnitude, c.m_fZ[i]), L"x values were not the same.");
 				}
 			}
 		}
@@ -161,5 +188,9 @@ namespace RaytracerTests
 			v.Set(rand(), rand(), rand(), rand());
 			return v;
 		}
+
+		bool AreFloatsEqual(float x, float y) { return fabs(x - y) < GetEpsilon(); }
+
+		float GetEpsilon() { return 0.00001; }
 	};
 }
