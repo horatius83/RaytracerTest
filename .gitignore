@@ -50,3 +50,4 @@ Temporary Items
 *.pdb
 *.pdb
 Debug/vc120.pdb
+*.pdb

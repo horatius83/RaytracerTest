@@ -32,9 +32,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] + b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
-					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
-					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
+					CheckFloatsEqual(x, c.m_fX[i], L"x value was not the same");
+					CheckFloatsEqual(y, c.m_fY[i], L"y value was not the same");
+					CheckFloatsEqual(z, c.m_fZ[i], L"z value was not the same");
 				}
 			}
 		}
@@ -57,9 +57,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] - b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
-					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
-					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
+					CheckFloatsEqual(x, c.m_fX[i], L"x value was not the same");
+					CheckFloatsEqual(y, c.m_fY[i], L"y value was not the same");
+					CheckFloatsEqual(z, c.m_fZ[i], L"z value was not the same");
 				}
 			}
 		}
@@ -84,9 +84,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] * scalar[i];
 
 					// Make sure they are consistent
-					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
-					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
-					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
+					CheckFloatsEqual(x, c.m_fX[i], L"x value was not the same");
+					CheckFloatsEqual(y, c.m_fY[i], L"y value was not the same");
+					CheckFloatsEqual(z, c.m_fZ[i], L"z value was not the same");
 				}
 			}
 		}
@@ -109,9 +109,9 @@ namespace RaytracerTests
 					auto z = a.m_fZ[i] * b.m_fZ[i];
 
 					// Make sure they are consistent
-					Assert::IsTrue(AreFloatsEqual(x, c.m_fX[i]), L"x value was not the same");
-					Assert::IsTrue(AreFloatsEqual(y, c.m_fY[i]), L"y value was not the same");
-					Assert::IsTrue(AreFloatsEqual(z, c.m_fZ[i]), L"z value was not the same");
+					CheckFloatsEqual(x, c.m_fX[i], L"x value was not the same");
+					CheckFloatsEqual(y, c.m_fY[i], L"y value was not the same");
+					CheckFloatsEqual(z, c.m_fZ[i], L"z value was not the same");
 				}
 			}
 		}
@@ -135,9 +135,9 @@ namespace RaytracerTests
 					auto y1 = b.m_fY[i];
 					auto z1 = b.m_fZ[i];
 
-					auto dotProduct = x0 * x1 + y0 * y1 + z0 * z1;
+					float dotProduct = x0 * x1 + y0 * y1 + z0 * z1;
 
-					Assert::IsTrue(AreFloatsEqual(dotProduct, c.Get(i)), L"Dot product was not equal");
+					CheckFloatsEqual(dotProduct, c.Get(i), L"Dot product was not equal");
 				}
 			}
 		}
@@ -162,12 +162,13 @@ namespace RaytracerTests
 					auto invMagnitude = (float)(1.0 / sqrt(x*x + y*y + z*z));
 
 					// Make sure they are consistent
-					Assert::IsTrue(AreFloatsEqual(x * invMagnitude, c.m_fX[i]), L"x values were not the same.");
-					Assert::IsTrue(AreFloatsEqual(y * invMagnitude, c.m_fY[i]), L"x values were not the same.");
-					Assert::IsTrue(AreFloatsEqual(z * invMagnitude, c.m_fZ[i]), L"x values were not the same.");
+					CheckFloatsEqual(x * invMagnitude, c.m_fX[i], L"x values were not the same.");
+					CheckFloatsEqual(y * invMagnitude, c.m_fY[i], L"x values were not the same.");
+					CheckFloatsEqual(z * invMagnitude, c.m_fZ[i], L"x values were not the same.");
 				}
 			}
 		}
+
 	private:
 		PacketVector CreateRandomPacketVector() {
 			Vector xs, ys, zs, ws;
@@ -189,8 +190,20 @@ namespace RaytracerTests
 			return v;
 		}
 
-		bool AreFloatsEqual(float x, float y) { return fabs(x - y) < GetEpsilon(); }
+		void CheckFloatsEqual(float xValue, float expectedValue, std::wstring errorMessage) {
+			auto error = PercentError(xValue, expectedValue);
+			auto epsilon = GetEpsilon();
+			if (error >= epsilon) {
+				std::wostringstream ss;
+				ss << errorMessage << ", Expected Value: " << expectedValue << ", Received Value: " << xValue;
+				Assert::IsTrue(error < epsilon, ss.str().c_str());
+			}
+		}
 
-		float GetEpsilon() { return 0.00001; }
+		float GetEpsilon() { return 0.001; }
+
+		float PercentError(float xValue, float expectedValue) {
+			return 100.0f * (fabs(xValue - expectedValue) / expectedValue);
+		}
 	};
 }
