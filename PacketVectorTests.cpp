@@ -18,7 +18,7 @@ namespace RaytracerTests
 		{
 			srand(83);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				auto b = CreateRandomPacketVector();
@@ -43,7 +43,7 @@ namespace RaytracerTests
 		{
 			srand(8383);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				auto b = CreateRandomPacketVector();
@@ -68,7 +68,7 @@ namespace RaytracerTests
 		{
 			srand(38);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				auto v = CreateRandomVector();
@@ -95,7 +95,7 @@ namespace RaytracerTests
 		{
 			srand(86);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				auto b = CreateRandomPacketVector();
@@ -120,7 +120,7 @@ namespace RaytracerTests
 		{
 			srand(8383);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				auto b = CreateRandomPacketVector();
@@ -146,7 +146,7 @@ namespace RaytracerTests
 		{
 			srand(68);
 
-			for (auto i = 0; i < 1000; ++i) {
+			for (auto i = 0; i < GetIterations(); ++i) {
 				// Generate a bunch of numbers
 				auto a = CreateRandomPacketVector();
 				a.Normalize();
@@ -205,5 +205,7 @@ namespace RaytracerTests
 		float PercentError(float xValue, float expectedValue) {
 			return 100.0f * (fabs(xValue - expectedValue) / expectedValue);
 		}
+
+		unsigned int GetIterations() { return 100; }
 	};
 }
